@@ -1,6 +1,7 @@
 import datetime
 import json
 from dataclasses import dataclass
+import shutil
 from src.elo import get_ranking
 from src.state_utils import update_ranking
 import random
@@ -37,8 +38,7 @@ def upload_images(files):
         filepath = f'data/images/photos/{filename}'
         
         # Save file
-        with open(filepath, 'wb') as f:
-            f.write(file.read())
+        shutil.copy2(file.name, filepath)
         
         # Update index
         with open('data/images/index.json', 'r') as f:
