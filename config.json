@@ -1,0 +1,5 @@
+{
+    "top_count": 20,
+    "initial_elo": 1500,
+    "k_factor": 32
+}
