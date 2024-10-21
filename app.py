@@ -61,21 +61,27 @@ custom_css = """
     font-weight: bold;
     font-size: 1.2em;
 }
+/* Hide fullscreen buttons */
+.image-container .svelte-rk35yg {
+    display: none !important;
+}
 """
 
 def on_select(img1: Image, img2: Image, choice):
-    winner_id = img1.id if choice == "left" else img2.id
-    loser_id = img2.id if choice == "left" else img1.id
-    
-    old_winner_rating = get_ranking(winner_id)
-    old_loser_rating = get_ranking(loser_id)
-    # Update ELO ratings
-    new_winner_rating, new_loser_rating = update_elo(old_winner_rating, old_loser_rating)
-    
-    # Update ranking and log
-    update_ranking(winner_id, new_winner_rating)
-    update_ranking(loser_id, new_loser_rating)
-    update_log(winner_id, loser_id)
+
+    if img1 is not None and img2 is not None:
+        winner_id = img1.id if choice == "left" else img2.id
+        loser_id = img2.id if choice == "left" else img1.id
+        
+        old_winner_rating = get_ranking(winner_id)
+        old_loser_rating = get_ranking(loser_id)
+        # Update ELO ratings
+        new_winner_rating, new_loser_rating = update_elo(old_winner_rating, old_loser_rating)
+        
+        # Update ranking and log
+        update_ranking(winner_id, new_winner_rating)
+        update_ranking(loser_id, new_loser_rating)
+        update_log(winner_id, loser_id)
     
     # Get next pair of images
     new_img1, new_img2 = get_random_images(2)
@@ -119,6 +125,26 @@ with gr.Blocks(css=custom_css) as app:
         refresh_btn = gr.Button("Refresh")
         
         refresh_btn.click(top_images, outputs=gallery)
+        
+        # Add auto-refresh functionality
+        gr.Markdown("Gallery updates automatically every minute")
+        auto_refresh = gr.Number(value=60, visible=False)  # 60 seconds
+        
+        def auto_refresh_gallery():
+            return top_images()
+        
+        gallery.change(
+            fn=lambda: gr.update(value=60), 
+            inputs=None, 
+            outputs=auto_refresh, 
+            every=60
+        )
+        auto_refresh.change(
+            fn=auto_refresh_gallery,
+            inputs=None,
+            outputs=gallery,
+            every=1
+        )
 
     with gr.Tab("Upload"):
         upload_files = gr.File(

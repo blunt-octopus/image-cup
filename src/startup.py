@@ -3,6 +3,9 @@ import os
 import datetime
 
 def initialize_app():
+    # Create necessary directories
+    create_directories()
+
     # Initialize images index
     initialize_images_index()
 
@@ -11,6 +14,17 @@ def initialize_app():
 
     # Initialize log
     initialize_log()
+
+def create_directories():
+    directories = [
+        'data',
+        'data/images',
+        'data/images/photos',
+        'data/state'
+    ]
+    for directory in directories:
+        os.makedirs(directory, exist_ok=True)
+    log_action("Created necessary directories")
 
 def initialize_images_index():
     index_path = 'data/images/index.json'
@@ -57,4 +71,3 @@ def log_action(message):
 
 if __name__ == "__main__":
     initialize_app()
-

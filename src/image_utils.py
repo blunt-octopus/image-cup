@@ -26,6 +26,10 @@ def get_random_images(count):
     return [Image(id, images[id]) for id in sampled_ids]
 
 def upload_images(files):
+
+    if len(files) == 0 or files is None:
+        return "No files uploaded"
+
     uploaded_count = 0
     for file in files:
         # Generate a unique filename
