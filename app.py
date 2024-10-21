@@ -114,6 +114,9 @@ with gr.Blocks(css=custom_css) as app:
         btn_right.click(on_select_right, inputs=[img1_obj, img2_obj], outputs=[img1, img2, img1_obj, img2_obj])
     
     with gr.Tab("Top"):
+
+        refresh_btn = gr.Button("Refresh")
+
         gallery = gr.Gallery(
             label="Top Images",
             show_label=False,
@@ -122,30 +125,9 @@ with gr.Blocks(css=custom_css) as app:
             rows=20,     # Increased to match top_count
             height="100%" # TODO: the gallery is too tall but I don't know how to fix it
         )
-        refresh_btn = gr.Button("Refresh")
         
         refresh_btn.click(top_images, outputs=gallery)
         
-        # Add auto-refresh functionality
-        gr.Markdown("Gallery updates automatically every minute")
-        auto_refresh = gr.Number(value=60, visible=False)  # 60 seconds
-        
-        def auto_refresh_gallery():
-            return top_images()
-        
-        gallery.change(
-            fn=lambda: gr.update(value=60), 
-            inputs=None, 
-            outputs=auto_refresh, 
-            every=60
-        )
-        auto_refresh.change(
-            fn=auto_refresh_gallery,
-            inputs=None,
-            outputs=gallery,
-            every=1
-        )
-
     with gr.Tab("Upload"):
         upload_files = gr.File(
             label="Upload your images",
